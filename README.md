@@ -61,13 +61,14 @@ ECS Fargate (pulls image from ECR, runs container on port 8080)
 2. Trusted entity type: **Web identity**
 3. Identity provider: `token.actions.githubusercontent.com`
 4. Audience: `sts.amazonaws.com`
-5. Click **Next** → skip policies for now → click **Next**
-6. Role name: `GitHubActionsECSRole`
-7. Click **Create role**
+5. GitHub organization (if shown): this is just a console filter — enter your GitHub username or org, or leave blank. The actual repo/branch restriction is set in the trust policy below.
+6. Add permissions: **skip this step** — click **Next** without attaching any policies. We create a least-privilege inline policy after the role is created.
+7. Role name: `GitHubActionsECSRole`
+8. Click **Create role**
 
 #### Edit the Trust Policy
 
-Go to the role → **Trust relationships** → **Edit trust policy** and replace with:
+After creating the role, you'll be back at the IAM Roles list. Click on `GitHubActionsECSRole` to open it. You'll see tabs: **Permissions | Trust relationships | Tags | ...**. Click the **Trust relationships** tab, then click **Edit trust policy** and replace with:
 
 ```json
 {
@@ -92,11 +93,18 @@ Go to the role → **Trust relationships** → **Edit trust policy** and replace
 }
 ```
 
-> Replace `<ACCOUNT_ID>`, `<GITHUB_ORG>`, and `<REPO_NAME>` with your values.
+> **How to find these values:**
+>
+> - `<ACCOUNT_ID>` — Your 12-digit AWS account number. Click your username in the top-right corner of the AWS Console (e.g., `123456789012`).
+> - `<GITHUB_ORG>` — Your GitHub username or organization. First part of your repo URL: `github.com/<GITHUB_ORG>/...`
+> - `<REPO_NAME>` — Your repository name. Second part of your repo URL: `github.com/.../<REPO_NAME>`
+>
+> Example: if your repo is `github.com/payam-org/aws-github`, the `sub` line becomes:
+> `repo:payam-org/aws-github:ref:refs/heads/main`
 
 #### Attach Inline Policy
 
-Go to the role → **Permissions** → **Add permissions** → **Create inline policy** → **JSON**:
+On the role page, go to the **Permissions** tab → click **Add permissions** dropdown → select **Create inline policy**. On the policy editor page, switch to the **JSON** tab and paste:
 
 ```json
 {
@@ -146,7 +154,7 @@ Go to the role → **Permissions** → **Add permissions** → **Create inline p
 }
 ```
 
-Policy name: `GitHubActionsECSDeployPolicy`
+Paste the JSON above, then click **Next**. On the review page, enter policy name: `GitHubActionsECSDeployPolicy` and click **Create policy**.
 
 ### 3.2 — ECS Task Execution Role
 
