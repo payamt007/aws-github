@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: eu-west-1
-  ECR_REPOSITORY: hello-world-app
+  ECR_REPOSITORY: hello-world
   ECS_CLUSTER: hello-world-cluster
   ECS_SERVICE: hello-world-service
   CONTAINER_NAME: hello-world-container
