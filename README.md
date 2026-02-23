@@ -275,13 +275,17 @@ Let GitHub Actions handle it. The ECS service will initially fail (no image) but
 
 ---
 
-## Phase 10 — Update deploy.yml Placeholders
+## Phase 10 — Add AWS Account ID as GitHub Variable
 
-Open `.github/workflows/deploy.yml` and replace `YOUR_ACCOUNT_ID` on line 32 with your real AWS account ID:
+The workflow uses a GitHub repository variable (not a secret) for the AWS account ID. Variables are visible in logs for easy debugging, while secrets are masked — since the account ID is not a credential, a variable is the right choice.
 
-```yaml
-role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/GitHubActionsECSRole
-```
+1. Go to your GitHub repo → **Settings** → **Secrets and variables** → **Actions**
+2. Click the **Variables** tab → **New repository variable**
+3. Name: `AWS_ACCOUNT_ID`
+4. Value: your 12-digit AWS account ID
+5. Click **Add variable**
+
+The workflow already references it as `${{ vars.AWS_ACCOUNT_ID }}` — no file changes needed.
 
 ---
 
